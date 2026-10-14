@@ -1,0 +1,9 @@
+{
+  "appId": "pk.offer.zen2048",
+  "appName": "Zen2048",
+  "webDir": "www",
+  "bundledWebRuntime": false,
+  "android": {
+    "backgroundColor": "#0f172a"
+  }
+}

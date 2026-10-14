@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#0f172a">
+  <meta name="description" content="Zen2048 — Sleek, calm offline 2048 tile merge puzzle with customizable grid sizes, multi-step undo, and procedural audio.">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Zen2048 — Calm Tile Merge Puzzle</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-wrapper">
+    <!-- Top Header -->
+    <header>
+      <div class="brand">
+        <img src="favicon.svg" alt="Zen2048 Logo" class="brand-icon">
+        <h1 class="brand-title">Zen2048</h1>
+      </div>
+      <div class="header-actions">
+        <button id="sound-toggle" class="icon-btn" title="Toggle Sound" aria-label="Toggle Sound">🔊</button>
+        <button id="theme-toggle" class="icon-btn" title="Change Theme" aria-label="Change Theme">🌙</button>
+        <button id="stats-btn" class="icon-btn" title="View Statistics" aria-label="View Statistics">📊</button>
+        <button id="help-btn" class="icon-btn" title="How to Play" aria-label="How to Play">ℹ️</button>
+      </div>
+    </header>
+
+    <!-- Score Panel -->
+    <div class="score-panel">
+      <div class="score-box">
+        <div class="score-label">Score</div>
+        <div id="current-score" class="score-value">0</div>
+        <div id="score-addition-slot"></div>
+      </div>
+      <div class="score-box">
+        <div class="score-label">Best</div>
+        <div id="best-score" class="score-value">0</div>
+      </div>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+      <select id="grid-select" class="grid-select" aria-label="Select Grid Size">
+        <option value="4" selected>Classic 4x4</option>
+        <option value="3">Fast 3x3</option>
+        <option value="5">Expansive 5x5</option>
+        <option value="6">Master 6x6</option>
+      </select>
+      <div style="display: flex; gap: 8px;">
+        <button id="undo-btn" class="btn-action" title="Undo Move" disabled>↩️ Undo</button>
+        <button id="new-game-btn" class="btn-action" title="Restart Game">🔄 New</button>
+      </div>
+    </div>
+
+    <!-- Game Board -->
+    <div id="board-container" class="board-container">
+      <div id="grid-board" class="grid-board"></div>
+
+      <!-- Win / Game Over Overlay -->
+      <div id="board-overlay" class="board-overlay">
+        <div id="overlay-title" class="overlay-title">Game Over</div>
+        <div id="overlay-subtitle" class="overlay-subtitle">No more moves possible!</div>
+        <div class="overlay-btns">
+          <button id="overlay-continue-btn" class="btn-secondary" style="display: none;">Keep Playing</button>
+          <button id="overlay-restart-btn" class="btn-primary">Try Again</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Statistics Modal -->
+    <div id="stats-modal" class="modal-overlay">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title">Statistics</h2>
+          <button class="icon-btn close-modal-btn">✕</button>
+        </div>
+        <div class="modal-body">
+          <div class="stats-grid">
+            <div class="stat-item">
+              <div id="stat-played" class="stat-num">0</div>
+              <div class="stat-desc">Games Played</div>
+            </div>
+            <div class="stat-item">
+              <div id="stat-won" class="stat-num">0</div>
+              <div class="stat-desc">Victories</div>
+            </div>
+            <div class="stat-item">
+              <div id="stat-highest-tile" class="stat-num">0</div>
+              <div class="stat-desc">Highest Tile</div>
+            </div>
+            <div class="stat-item">
+              <div id="stat-total-score" class="stat-num">0</div>
+              <div class="stat-desc">All-Time Score</div>
+            </div>
+          </div>
+          <p style="text-align: center; font-size: 0.8rem; color: var(--text-muted);">
+            All data saved locally on your device.
+          </p>
+        </div>
+        <div class="modal-footer">
+          <button class="btn-primary close-modal-btn">Close</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Help Modal -->
+    <div id="help-modal" class="modal-overlay">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title">How to Play Zen2048</h2>
+          <button class="icon-btn close-modal-btn">✕</button>
+        </div>
+        <div class="modal-body">
+          <p style="margin-bottom: 10px;">• <strong>Controls:</strong> Swipe across the board or use the Arrow keys (or W, A, S, D) to slide tiles in all four directions.</p>
+          <p style="margin-bottom: 10px;">• <strong>Merge:</strong> When two tiles with the same number touch, they merge into one with double the value!</p>
+          <p style="margin-bottom: 10px;">• <strong>Objective:</strong> Reach the <strong>2048</strong> tile to win! You can continue playing indefinitely to achieve higher scores.</p>
+          <p style="margin-bottom: 10px;">• <strong>Undo:</strong> Tap ↩️ Undo anytime to step backward and rethink your moves.</p>
+          <p>• <strong>100% Offline:</strong> Enjoy endless puzzle solving anywhere with zero ads or internet required.</p>
+        </div>
+        <div class="modal-footer">
+          <button class="btn-primary close-modal-btn">Got It</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+      Zen2048 — 100% Offline Casual Game by <a href="https://github.com/OfferPk" target="_blank" rel="noopener">OfferPk</a>
+    </footer>
+  </div>
+
+  <script src="logic.js"></script>
+  <script src="audio.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
