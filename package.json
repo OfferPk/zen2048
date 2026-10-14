@@ -1,0 +1,36 @@
+{
+  "name": "zen2048",
+  "version": "1.0.0",
+  "description": "Zen2048: sleek, modern offline 2048 tile merge puzzle (vanilla JS + Capacitor Android)",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "build": "node scripts/build.js",
+    "test": "node test/logic.test.js",
+    "generate-icons": "node scripts/generate-icons.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/OfferPk/zen2048.git"
+  },
+  "keywords": [
+    "2048",
+    "offline-game",
+    "casual-game",
+    "capacitor",
+    "pwa",
+    "puzzle",
+    "merge-game"
+  ],
+  "author": "OfferPk",
+  "dependencies": {
+    "@capacitor/android": "^8.5.3",
+    "@capacitor/core": "^8.5.3"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^8.5.3"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
