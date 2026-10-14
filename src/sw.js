@@ -3,11 +3,11 @@
  * Fully offline cache-first strategy.
  */
 
-const CACHE_NAME = 'zen2048-v1.0.0';
+const CACHE_NAME = 'zen2048-v1.0.2';
 const ASSETS = [
   './',
   './index.html',
-  './style.css',
+  './style.css?v=3',
   './logic.js',
   './audio.js',
   './game.js',
