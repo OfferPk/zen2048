@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -10,126 +10,145 @@
   <title>Zen2048 — Calm Tile Merge Puzzle</title>
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="manifest" href="manifest.webmanifest">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=3">
 </head>
 <body>
   <div class="app-wrapper">
-    <!-- Top Header -->
-    <header>
+    <header class="top-bar">
       <div class="brand">
-        <img src="favicon.svg" alt="Zen2048 Logo" class="brand-icon">
-        <h1 class="brand-title">Zen2048</h1>
+        <img src="favicon.svg" alt="" class="brand-icon">
+        <div class="brand-copy">
+          <h1 class="brand-title">Zen2048</h1>
+          <p class="brand-caption">A little space to think</p>
+        </div>
       </div>
-      <div class="header-actions">
-        <button id="sound-toggle" class="icon-btn" title="Toggle Sound" aria-label="Toggle Sound">🔊</button>
-        <button id="theme-toggle" class="icon-btn" title="Change Theme" aria-label="Change Theme">🌙</button>
-        <button id="stats-btn" class="icon-btn" title="View Statistics" aria-label="View Statistics">📊</button>
-        <button id="help-btn" class="icon-btn" title="How to Play" aria-label="How to Play">ℹ️</button>
+      <div class="header-actions" role="group" aria-label="Game options">
+        <button id="sound-toggle" class="icon-btn" title="Sound on" aria-label="Mute sound" aria-pressed="true">
+          <svg id="sound-on-icon" aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <path d="M15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14"></path>
+          </svg>
+          <svg id="sound-off-icon" class="hidden" aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <path d="m17 9 5 6m0-6-5 6"></path>
+          </svg>
+        </button>
+        <button id="theme-toggle" class="icon-btn theme-btn" title="Change theme" aria-label="Theme: dark. Change theme.">🌙</button>
+        <button id="stats-btn" class="icon-btn" title="View statistics" aria-label="View statistics">
+          <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 19V5M4 19h16"></path><rect x="7" y="12" width="3" height="4" rx="1"></rect><rect x="13" y="8" width="3" height="8" rx="1"></rect><rect x="19" y="5" width="2" height="11" rx="1"></rect>
+          </svg>
+        </button>
+        <button id="help-btn" class="icon-btn" title="How to play" aria-label="How to play">
+          <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="9"></circle><path d="M9.7 9a2.4 2.4 0 1 1 4.2 1.6c-1.1 1-1.9 1.4-1.9 3"></path><path d="M12 17.2h.01"></path>
+          </svg>
+        </button>
       </div>
     </header>
 
-    <!-- Score Panel -->
-    <div class="score-panel">
-      <div class="score-box">
+    <section class="score-panel" aria-label="Game scores">
+      <div class="score-box score-current">
         <div class="score-label">Score</div>
-        <div id="current-score" class="score-value">0</div>
-        <div id="score-addition-slot"></div>
+        <div id="current-score" class="score-value" aria-label="Current score">0</div>
+        <div id="score-addition-slot" aria-hidden="true"></div>
       </div>
       <div class="score-box">
         <div class="score-label">Best</div>
         <div id="best-score" class="score-value">0</div>
       </div>
-    </div>
+    </section>
 
-    <!-- Toolbar -->
-    <div class="toolbar">
-      <select id="grid-select" class="grid-select" aria-label="Select Grid Size">
-        <option value="4" selected>Classic 4x4</option>
-        <option value="3">Fast 3x3</option>
-        <option value="5">Expansive 5x5</option>
-        <option value="6">Master 6x6</option>
+    <section class="toolbar" aria-label="Game controls">
+      <label class="sr-only" for="grid-select">Grid size</label>
+      <select id="grid-select" class="grid-select" aria-label="Select grid size">
+        <option value="4" selected>Classic 4×4</option>
+        <option value="3">Quick 3×3</option>
+        <option value="5">Expansive 5×5</option>
+        <option value="6">Master 6×6</option>
       </select>
-      <div style="display: flex; gap: 8px;">
-        <button id="undo-btn" class="btn-action" title="Undo Move" disabled>↩️ Undo</button>
-        <button id="new-game-btn" class="btn-action" title="Restart Game">🔄 New</button>
+      <div class="toolbar-actions">
+        <button id="undo-btn" class="btn-action" title="Undo previous move" aria-label="Undo previous move" aria-keyshortcuts="Control+Z Meta+Z" disabled>
+          <svg aria-hidden="true" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v6h6"></path><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"></path></svg>
+          <span>Undo</span>
+        </button>
+        <button id="new-game-btn" class="btn-action btn-new" title="Start a new game" aria-label="Start a new game">
+          <svg aria-hidden="true" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7v5h-5"></path><path d="M4.9 9a8 8 0 0 1 13.3-2L20 12M4 17v-5h5"></path><path d="M19.1 15a8 8 0 0 1-13.3 2L4 12"></path></svg>
+          <span>New game</span>
+        </button>
       </div>
+    </section>
+
+    <div class="board-caption">
+      <div>
+        <p class="board-eyebrow">CLASSIC MODE</p>
+        <p id="board-instruction" class="board-instruction">Swipe or use arrow keys to slide. Match tiles to reach the goal.</p>
+      </div>
+      <span class="goal-chip">GOAL <strong>2048</strong></span>
     </div>
 
-    <!-- Game Board -->
-    <div id="board-container" class="board-container">
-      <div id="grid-board" class="grid-board"></div>
-
-      <!-- Win / Game Over Overlay -->
-      <div id="board-overlay" class="board-overlay">
-        <div id="overlay-title" class="overlay-title">Game Over</div>
-        <div id="overlay-subtitle" class="overlay-subtitle">No more moves possible!</div>
+    <main id="board-container" class="board-container" aria-label="2048 puzzle">
+      <div id="grid-board" class="grid-board" role="grid" tabindex="0" aria-label="2048 game board" aria-describedby="board-instruction" aria-keyshortcuts="ArrowUp ArrowDown ArrowLeft ArrowRight"></div>
+      <div id="board-overlay" class="board-overlay" role="group" aria-labelledby="overlay-title" aria-describedby="overlay-subtitle" aria-hidden="true" inert>
+        <h2 id="overlay-title" class="overlay-title">Game Over</h2>
+        <p id="overlay-subtitle" class="overlay-subtitle">No more moves possible.</p>
         <div class="overlay-btns">
-          <button id="overlay-continue-btn" class="btn-secondary" style="display: none;">Keep Playing</button>
-          <button id="overlay-restart-btn" class="btn-primary">Try Again</button>
+          <button id="overlay-continue-btn" class="btn-secondary" hidden>Keep playing</button>
+          <button id="overlay-restart-btn" class="btn-primary">Try again</button>
         </div>
       </div>
-    </div>
+    </main>
 
-    <!-- Statistics Modal -->
-    <div id="stats-modal" class="modal-overlay">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h2 class="modal-title">Statistics</h2>
-          <button class="icon-btn close-modal-btn">✕</button>
-        </div>
-        <div class="modal-body">
-          <div class="stats-grid">
-            <div class="stat-item">
-              <div id="stat-played" class="stat-num">0</div>
-              <div class="stat-desc">Games Played</div>
-            </div>
-            <div class="stat-item">
-              <div id="stat-won" class="stat-num">0</div>
-              <div class="stat-desc">Victories</div>
-            </div>
-            <div class="stat-item">
-              <div id="stat-highest-tile" class="stat-num">0</div>
-              <div class="stat-desc">Highest Tile</div>
-            </div>
-            <div class="stat-item">
-              <div id="stat-total-score" class="stat-num">0</div>
-              <div class="stat-desc">All-Time Score</div>
-            </div>
-          </div>
-          <p style="text-align: center; font-size: 0.8rem; color: var(--text-muted);">
-            All data saved locally on your device.
-          </p>
-        </div>
-        <div class="modal-footer">
-          <button class="btn-primary close-modal-btn">Close</button>
-        </div>
-      </div>
-    </div>
+    <div id="game-status" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
 
-    <!-- Help Modal -->
-    <div id="help-modal" class="modal-overlay">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h2 class="modal-title">How to Play Zen2048</h2>
-          <button class="icon-btn close-modal-btn">✕</button>
-        </div>
-        <div class="modal-body">
-          <p style="margin-bottom: 10px;">• <strong>Controls:</strong> Swipe across the board or use the Arrow keys (or W, A, S, D) to slide tiles in all four directions.</p>
-          <p style="margin-bottom: 10px;">• <strong>Merge:</strong> When two tiles with the same number touch, they merge into one with double the value!</p>
-          <p style="margin-bottom: 10px;">• <strong>Objective:</strong> Reach the <strong>2048</strong> tile to win! You can continue playing indefinitely to achieve higher scores.</p>
-          <p style="margin-bottom: 10px;">• <strong>Undo:</strong> Tap ↩️ Undo anytime to step backward and rethink your moves.</p>
-          <p>• <strong>100% Offline:</strong> Enjoy endless puzzle solving anywhere with zero ads or internet required.</p>
-        </div>
-        <div class="modal-footer">
-          <button class="btn-primary close-modal-btn">Got It</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Footer -->
-    <footer>
-      Zen2048 — 100% Offline Casual Game by <a href="https://github.com/OfferPk" target="_blank" rel="noopener">OfferPk</a>
+    <footer class="app-footer">
+      <span>Made for calm, focused play</span>
+      <a href="https://github.com/OfferPk" target="_blank" rel="noopener">OfferPk on GitHub</a>
     </footer>
+  </div>
+
+  <div id="stats-modal" class="modal-overlay" aria-hidden="true" inert>
+    <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="stats-title" tabindex="-1">
+      <div class="modal-header">
+        <div>
+          <p class="modal-eyebrow">YOUR JOURNEY</p>
+          <h2 id="stats-title" class="modal-title">Statistics</h2>
+        </div>
+        <button class="icon-btn close-modal-btn" type="button" aria-label="Close statistics">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="stats-grid">
+          <div class="stat-item"><div id="stat-played" class="stat-num">0</div><div class="stat-desc">Games played</div></div>
+          <div class="stat-item"><div id="stat-won" class="stat-num">0</div><div class="stat-desc">Victories</div></div>
+          <div class="stat-item"><div id="stat-highest-tile" class="stat-num">0</div><div class="stat-desc">Highest tile</div></div>
+          <div class="stat-item"><div id="stat-total-score" class="stat-num">0</div><div class="stat-desc">All-time score</div></div>
+        </div>
+        <p class="privacy-note">Your play data stays on this device.</p>
+      </div>
+      <div class="modal-footer"><button class="btn-primary close-modal-btn" type="button">Done</button></div>
+    </div>
+  </div>
+
+  <div id="help-modal" class="modal-overlay" aria-hidden="true" inert>
+    <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="help-title" tabindex="-1">
+      <div class="modal-header">
+        <div>
+          <p class="modal-eyebrow">THE BASICS</p>
+          <h2 id="help-title" class="modal-title">How to play</h2>
+        </div>
+        <button class="icon-btn close-modal-btn" type="button" aria-label="Close how to play">×</button>
+      </div>
+      <div class="modal-body">
+        <ol class="help-list">
+          <li><strong>Slide:</strong> Swipe across the board or use the arrow keys (WASD works too).</li>
+          <li><strong>Merge:</strong> Matching tiles combine into one with double the value.</li>
+          <li><strong>Reach 2048:</strong> Make the goal tile, then keep playing if you like.</li>
+          <li><strong>Rethink:</strong> Undo reverses your last move; choose a different grid for a fresh challenge.</li>
+        </ol>
+        <p class="privacy-note">Offline by design. No ads, trackers, or account needed.</p>
+      </div>
+      <div class="modal-footer"><button class="btn-primary close-modal-btn" type="button">Got it</button></div>
+    </div>
   </div>
 
   <script src="logic.js"></script>
