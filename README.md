@@ -31,7 +31,7 @@
 - **Main menu** — Continue (resumes your auto-saved board), Journey, four Classic difficulties, Settings, Stats and How to play.
 - **Journey mode** — 24 stages, each with its own board size and goal tile (3×3 → 64 up to 5×5 → 4096). Later stages add 🪨 **stones** (fixed blocks that never move or merge) and ⏱ **move limits**. Earn 1–3 ★ by moves used vs. par; clearing a stage unlocks the next. 3 undos per stage.
 - **Classic difficulties** — Mini 3×3 (goal 256), Classic 4×4 (2048), Big 5×5 (4096), Huge 6×6 (8192). Reach the goal, then *Keep playing* for a record. Unlimited multi-step undo.
-- **Controls** — swipe with a finger, drag with the mouse, or use Arrow keys / WASD (also `H J K L`). `U`/`Z` undo, `R` restart (two-tap confirm), `P`/`Esc` pause.
+- **Controls** — swipe with a finger, drag with the mouse, or use Arrow keys / WASD (also `H J K L`). `U` / `Z` / `Ctrl+Z` undo, `R` restart (two-tap confirm), `P`/`Esc` pause.
 - **Pause** — pause button, `Esc`/`P`, Android back button, or switching apps hides the board and stops the clock.
 - **Game over / win dialogs** — score, moves, time, stars; *Next stage*, *Keep playing*, *Undo last move* (even after "No moves left"), *Play again*, *Main menu*.
 - **Settings** — sound effects, vibration, tile animations, theme (Zen Dark / Sunset Warm / Clean Light), reset progress (two-tap confirm).

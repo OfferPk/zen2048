@@ -94,6 +94,10 @@ async function run(label, viewport, isMobile) {
   ok(g[0][0] === 2 && g[3][0] === 2 && (await page.textContent('#current-score')) === '0', 'undo restores previous board and score');
   await page.keyboard.press('ArrowUp');
   await page.waitForTimeout(160);
+  await page.keyboard.press('Control+z');
+  ok((await page.textContent('#current-score')) === '0', 'Ctrl+Z undoes');
+  await page.keyboard.press('ArrowUp');
+  await page.waitForTimeout(160);
 
   // ---- Pause / resume
   await page.click('#pause-btn');

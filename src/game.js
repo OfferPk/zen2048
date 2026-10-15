@@ -794,6 +794,11 @@
 
   function bindInput() {
     document.addEventListener('keydown', function (e) {
+      if ((e.ctrlKey || e.metaKey) && !e.altKey && (e.key === 'z' || e.key === 'Z') && isGameScreen() && !modalStack.length) {
+        e.preventDefault();
+        doUndo();
+        return;
+      }
       if (e.ctrlKey || e.metaKey || e.altKey) return;
       var tag = e.target && e.target.tagName;
       if (tag === 'SELECT' || tag === 'INPUT' || tag === 'TEXTAREA') return;
