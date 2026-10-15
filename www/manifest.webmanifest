@@ -1,7 +1,7 @@
 {
   "name": "Zen2048",
   "short_name": "Zen2048",
-  "description": "Sleek, calm offline 2048 tile merge puzzle with customizable grid sizes, multi-step undo, and procedural audio.",
+  "description": "Calm offline 2048 tile merge puzzle with a 24-stage Journey, four board sizes, undo and procedural sound.",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#0f172a",

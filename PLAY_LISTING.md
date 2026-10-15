@@ -4,20 +4,25 @@
 Zen2048 — Calm Tile Merge
 
 ## Short Description (<=80 characters)
-Sleek, calm offline 2048 tile merge puzzle with undo and procedural audio.
+Calm offline 2048 puzzle: 24-stage Journey, 4 board sizes, undo and themes.
 
 ## Category
 Puzzle / Casual / Brain Games
 
 ## Content Rating Notes
-Rated for Everyone (PEGI 3) — No violence, no adult content, no personal interactions.
+Rated for Everyone (PEGI 3) — No violence, no adult themes, no user interactions.
 
 ## Privacy Statement
-Zen2048 is a 100% offline single-player puzzle game.
-- No personal data, device identifiers, or usage metrics are collected.
-- No analytics, tracking SDKs, or advertising libraries are included.
-- All high scores, board progress, and preferences are stored exclusively on your device.
-- No internet connection or network permissions required.
+Zen2048 is a single-player game that plays fully offline.
+- The game itself collects no personal data; scores, Journey progress and preferences are stored only on your device.
+- The Android app shows banner and interstitial ads through Google AdMob (Google Mobile Ads SDK). When online, AdMob may collect device identifiers / advertising ID as described in Google's policy: https://policies.google.com/technologies/ads
+- The web version (GitHub Pages / self-hosted) contains no ads and makes no network requests after loading.
+- No account, no analytics, no in-app purchases.
+
+## Data safety form (Play Console) notes
+- Contains ads: **Yes** (Google AdMob). This repo ships Google's public TEST ad unit IDs only; replace them with your own IDs in a private release build before publishing.
+- Data collected by the app developer: none. Data collected by AdMob SDK: Device or other IDs (advertising), App interactions / diagnostics — declare per Google's AdMob Data safety guidance.
+- Ads ID permission: provided by the play-services-ads dependency (`com.google.android.gms.permission.AD_ID`).
 
 ---
 
@@ -25,59 +30,53 @@ Zen2048 is a 100% offline single-player puzzle game.
 
 Unwind your mind and sharpen your logic with Zen2048, a refined, tranquil take on the classic tile-merging puzzle.
 
-Designed from the ground up for peace of mind, smooth responsiveness, and pure deductive satisfaction, Zen2048 combines minimalist visual aesthetics with harmonic procedural audio to deliver an unmatched puzzle flow state.
-
-Slide, merge, and strategize across multiple board sizes. Whether you want a lightning-fast 3×3 brain warm-up or a deep 6×6 tactical marathon, Zen2048 adapts to your pace.
+Slide the board, merge equal numbers and build bigger and bigger tiles. Smooth sliding animations, gentle on-device chimes and calm themes turn every game into a little moment of focus.
 
 ### 🌟 KEY FEATURES
 
-• Multiple Grid Dimensions:
-  - Fast 3×3: Intense, compact matches where every move counts.
-  - Classic 4×4: The timeless 2048 challenge you know and love.
-  - Expansive 5×5: Room to breathe and build massive combo chains.
-  - Master 6×6: An epic, expansive board for grand puzzle masters.
+• Journey Mode — 24 stages
+  - Every stage has its own board size and goal tile, from a 3×3 warm-up to a 5×5 race to 4096.
+  - Stone blocks that never move force new strategies.
+  - Move-limited stages test your efficiency.
+  - Earn up to 3 ★ per stage by finishing in fewer moves; clearing a stage unlocks the next.
 
-• Multi-Step Undo:
-  - Miscalculated a slide? Made a wrong turn? Tap the Undo button anytime to step back and plan the ideal sequence.
+• Classic Mode — 4 difficulties
+  - Mini 3×3 (goal 256), Classic 4×4 (2048), Big 5×5 (4096) and Huge 6×6 (8192).
+  - Reach the goal, then keep playing for a record score.
 
-• Harmonic Procedural Web Audio:
-  - Delightful bell chimes synthesized locally on your device.
-  - Chimes dynamically rise in musical pitch as you merge higher-value tiles!
-  - Gentle haptic feedback gives every merge a satisfying tactile weight.
-  - One-tap instant mute for quiet moments.
+• Undo
+  - Unlimited multi-step undo in Classic, 3 undos per Journey stage.
+  - Even after "No moves left" you can undo and save the game.
 
-• Endless Play:
-  - Reaching the 2048 tile is just the beginning! Keep merging into 4096, 8192, and beyond to set unprecedented personal records.
+• Pause & auto-save
+  - Pause anytime; the board is hidden and the clock stops.
+  - Your board is saved automatically — tap Continue to pick up where you left off.
 
-• Fluid Touch & Keyboard Controls:
-  - Responsive, velocity-aware touch swipe gestures crafted for one-handed mobile play.
-  - Full keyboard support (Arrow keys or WASD) on Chromebooks and desktop devices.
+• Sound & haptics
+  - Bell chimes synthesised on your device, rising in pitch as tiles grow.
+  - Separate switches for sound and vibration.
 
-• Elegant Themes:
-  - Zen Dark: Calming deep slate with soft cyan and golden highlights.
-  - Sunset Warm: Rich terracotta, amber, and twilight gradients.
-  - Clean Light: Crisp minimalist stone and pastel accents.
+• Smooth controls
+  - Natural swipe gestures for one-handed play; arrow keys / WASD on Chromebooks and keyboards.
 
-• Local High Scores & Statistics:
-  - Track total games played, victory counts, highest tile achieved, and all-time scores.
+• Themes: Zen Dark, Sunset Warm and Clean Light.
 
-• 100% Offline & Private:
-  - Play on airplane flights, commutes, or off-grid retreats.
-  - No ads, no popups, no account logins, and no internet required.
+• Statistics: games played, goals reached, highest tile, all-time score, best score per board and Journey stars.
 
-Experience the calming joy of numbers in motion. Download Zen2048 today and find your puzzle flow!
+• Plays offline: no account and no internet connection needed to play.
 
 ---
 
 ## Feature List
-- 100% offline single-player casual puzzle
-- 3x3, 4x4, 5x5, and 6x6 grid sizes
-- Multi-step undo move capability
-- Endless game mode after reaching 2048
-- Harmonic procedural sound synthesis & haptics
-- Dark, Sunset, and Light visual themes
-- Local stats and high score tracking
-- Native Android APK and progressive web app (PWA)
+- Journey mode: 24 stages with stones, move limits and 3-star ratings
+- Classic 3x3, 4x4, 5x5 and 6x6 boards with goal tiles
+- Main menu, pause, settings, game over / win dialogs
+- Multi-step undo (limited in Journey)
+- Auto-saved board with Continue
+- Procedural Web Audio sound effects + haptics, each with a toggle
+- Dark, Sunset and Light themes; tile animation toggle
+- Local statistics and best scores
+- Native Android APK (Capacitor) and installable offline web app (PWA)
 
 ## Keywords
-2048, offline puzzle, tile merge, brain trainer, calm game, zen 2048, casual puzzle, sliding puzzle, number game, no ads 2048
+2048, offline puzzle, tile merge, brain trainer, calm game, zen 2048, casual puzzle, sliding puzzle, number game, 2048 levels

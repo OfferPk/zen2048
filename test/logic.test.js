@@ -233,6 +233,184 @@ it('Serializes and deserializes game state accurately', () => {
   assert.strictEqual(restored.grid[1][1], 128);
 });
 
+
+// ---------- v1.1: stones, move limits, journey, transitions ----------
+const S = Logic.STONE;
+
+it('Stones split a line: tiles stop at and never cross a stone', () => {
+  const res = Logic.slideLineLeft([0, 2, S, 2]);
+  assert.deepStrictEqual(res.line, [2, 0, S, 2]);
+  assert.strictEqual(res.scoreGained, 0);
+});
+
+it('Stones never merge with each other and never move', () => {
+  const grid = [
+    [S, S, 0],
+    [0, 0, 0],
+    [0, 2, 0]
+  ];
+  const res = Logic.slide(grid, 'down');
+  assert.strictEqual(res.grid[0][0], S);
+  assert.strictEqual(res.grid[0][1], S);
+  assert.strictEqual(res.grid[2][1], 2);
+  assert.strictEqual(res.moved, false);
+});
+
+it('canMove ignores adjacent stones (no false positive)', () => {
+  const grid = [
+    [S, S, 2],
+    [4, 8, 4],
+    [2, 4, 2]
+  ];
+  assert.strictEqual(Logic.canMove(grid), false);
+});
+
+it('createGame places stones and spawns tiles only on empty cells', () => {
+  const g = Logic.createGame({ size: 4, stones: [[1, 2], [3, 0]] });
+  assert.strictEqual(g.grid[1][2], S);
+  assert.strictEqual(g.grid[3][0], S);
+  let tiles = 0;
+  g.grid.forEach(row => row.forEach(v => { if (v > 0) tiles++; }));
+  assert.strictEqual(tiles, 2);
+});
+
+it('Transitions map every moving tile to its destination', () => {
+  const grid = [
+    [0, 2, 0, 2],
+    [0, 0, 0, 0],
+    [0, 0, 0, 0],
+    [4, 0, 0, 0]
+  ];
+  const res = Logic.slide(grid, 'left');
+  const fromTo = res.transitions.map(t => `${t.from.r},${t.from.c}->${t.to.r},${t.to.c}`).sort();
+  assert.deepStrictEqual(fromTo, ['0,1->0,0', '0,3->0,0', '3,0->3,0'].sort());
+  assert.deepStrictEqual(res.merges, [{ r: 0, c: 0, value: 4 }]);
+});
+
+it('Move limit ends the game when the goal was not reached', () => {
+  const g = Logic.createGame({ size: 4, target: 2048, moveLimit: 1 });
+  g.grid = [
+    [2, 0, 0, 0],
+    [0, 0, 0, 0],
+    [0, 0, 0, 0],
+    [0, 0, 0, 0]
+  ];
+  const res = Logic.makeMove(g, 'right', () => 0);
+  assert.strictEqual(res.moved, true);
+  assert.strictEqual(g.isGameOver, true);
+  assert.strictEqual(g.outOfMoves, true);
+  assert.strictEqual(Logic.movesLeft(g), 0);
+});
+
+it('Reaching the goal on the last allowed move is a win, not a loss', () => {
+  const g = Logic.createGame({ size: 4, target: 8, moveLimit: 1 });
+  g.grid = [
+    [4, 4, 0, 0],
+    [0, 0, 0, 0],
+    [0, 0, 0, 0],
+    [0, 0, 0, 0]
+  ];
+  const res = Logic.makeMove(g, 'left', () => 0.99);
+  assert.strictEqual(res.newlyWon, true);
+  assert.strictEqual(g.isGameOver, false);
+  assert.strictEqual(g.outOfMoves, false);
+});
+
+it('Undo limit is enforced and counts down', () => {
+  const g = Logic.createGame({ size: 4, undoLimit: 1 });
+  g.grid = [
+    [2, 0, 0, 0],
+    [0, 0, 0, 0],
+    [0, 0, 0, 0],
+    [0, 0, 0, 0]
+  ];
+  Logic.makeMove(g, 'right', () => 0);
+  Logic.makeMove(g, 'down', () => 0);
+  assert.strictEqual(Logic.undo(g), true);
+  assert.strictEqual(g.undosLeft, 0);
+  assert.strictEqual(Logic.canUndo(g), false);
+  assert.strictEqual(Logic.undo(g), false);
+});
+
+it('Undo clears game-over and keeps an acknowledged win', () => {
+  const g = Logic.createGame({ size: 4, target: 4 });
+  g.grid = [
+    [2, 2, 0, 0],
+    [0, 0, 0, 0],
+    [0, 0, 0, 0],
+    [0, 0, 0, 0]
+  ];
+  Logic.makeMove(g, 'left', () => 0);
+  assert.strictEqual(g.hasWon, true);
+  g.wonAcknowledged = true;
+  Logic.undo(g);
+  assert.strictEqual(g.hasWon, true, 'win is not re-triggered after Keep playing');
+  g.isGameOver = true;
+  Logic.makeMove(g, 'right');
+  assert.strictEqual(Logic.makeMove(g, 'right').moved, false);
+});
+
+it('Journey has 24 well-formed stages', () => {
+  assert.strictEqual(Logic.JOURNEY.length, 24);
+  Logic.JOURNEY.forEach((lv, i) => {
+    assert.strictEqual(lv.stage, i + 1);
+    assert.ok(lv.size >= 3 && lv.size <= 6);
+    assert.ok(lv.target >= 64 && (lv.target & (lv.target - 1)) === 0);
+    assert.ok(lv.par > 0);
+    assert.ok(lv.stones.length < lv.size * lv.size / 3);
+    lv.stones.forEach(([r, c]) => assert.ok(r >= 0 && r < lv.size && c >= 0 && c < lv.size));
+    const g = Logic.createGame(lv);
+    assert.strictEqual(Logic.getEmptyCells(g.grid).length, lv.size * lv.size - lv.stones.length - 2);
+  });
+});
+
+it('Classic difficulties cover 3x3 to 6x6', () => {
+  assert.deepStrictEqual(Object.keys(Logic.CLASSIC).map(Number), [3, 4, 5, 6]);
+  assert.strictEqual(Logic.CLASSIC[4].target, 2048);
+});
+
+it('starsFor awards 3/2/1 stars by moves vs par', () => {
+  const lv = Logic.JOURNEY[0];
+  assert.strictEqual(Logic.starsFor(lv, lv.par), 3);
+  assert.strictEqual(Logic.starsFor(lv, lv.par + 1), 2);
+  assert.strictEqual(Logic.starsFor(lv, lv.par * 3), 1);
+});
+
+it('Serialize round-trips stones, limits, undo budget and history', () => {
+  const g = Logic.createGame({ size: 5, target: 512, stones: [[2, 2]], moveLimit: 50, undoLimit: 3 });
+  g.grid = Logic.createEmptyGrid(5);
+  g.grid[2][2] = S;
+  g.grid[0][4] = 2;
+  Logic.makeMove(g, 'left', () => 0);
+  const r = Logic.deserialize(Logic.serialize(g));
+  assert.strictEqual(r.grid[2][2], S);
+  assert.strictEqual(r.moveLimit, 50);
+  assert.strictEqual(r.undosLeft, 3);
+  assert.strictEqual(r.history.length, 1);
+  assert.strictEqual(Logic.undo(r), true);
+});
+
+it('Deserialize rejects corrupt saves', () => {
+  assert.strictEqual(Logic.deserialize('not json'), null);
+  assert.strictEqual(Logic.deserialize(JSON.stringify({ grid: [[3, 0], [0, 0]] })), null);
+  assert.strictEqual(Logic.deserialize(JSON.stringify({ grid: [[0, 0, 0], [0, 7, 0], [0, 0, 0]] })), null);
+});
+
+it('Random play always terminates with a consistent game state', () => {
+  let seed = 42;
+  const rng = () => { seed = (seed * 1103515245 + 12345) % 2147483648; return seed / 2147483648; };
+  const dirs = ['left', 'up', 'right', 'down'];
+  for (const lv of Logic.JOURNEY.slice(0, 8)) {
+    const g = Logic.createGame(Object.assign({ randomFn: rng }, lv));
+    let guard = 0;
+    while (!g.isGameOver && !g.hasWon && guard++ < 5000) {
+      Logic.makeMove(g, dirs[Math.floor(rng() * 4)], rng);
+    }
+    assert.ok(g.isGameOver || g.hasWon);
+    lv.stones.forEach(([r, c]) => assert.strictEqual(g.grid[r][c], S));
+  }
+});
+
 console.log(`\nResults: ${passed}/${passed + failed} tests passed.\n`);
 if (failed > 0) {
   process.exit(1);
