@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="theme-color" content="#0f172a">
-  <meta name="description" content="Zen2048 — Sleek, calm offline 2048 tile merge puzzle with customizable grid sizes, multi-step undo, and procedural audio.">
+  <meta name="description" content="Zen2048 — calm offline 2048 tile merge puzzle with a 24-stage Journey, four board sizes, undo, themes and procedural sound.">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Zen2048 — Calm Tile Merge Puzzle</title>
@@ -14,91 +14,166 @@
 </head>
 <body>
   <div class="app-wrapper">
-    <!-- Top Header -->
     <header>
       <div class="brand">
-        <img src="favicon.svg" alt="Zen2048 Logo" class="brand-icon">
-        <h1 class="brand-title">Zen2048</h1>
+        <img src="favicon.svg" alt="" class="brand-icon" width="36" height="36">
+        <div>
+          <h1 class="brand-title">Zen2048</h1>
+          <span class="brand-caption">CALM TILE MERGE</span>
+        </div>
       </div>
       <div class="header-actions">
-        <button id="sound-toggle" class="icon-btn" title="Toggle Sound" aria-label="Toggle Sound">🔊</button>
-        <button id="theme-toggle" class="icon-btn" title="Change Theme" aria-label="Change Theme">🌙</button>
-        <button id="stats-btn" class="icon-btn" title="View Statistics" aria-label="View Statistics">📊</button>
-        <button id="help-btn" class="icon-btn" title="How to Play" aria-label="How to Play">ℹ️</button>
+        <button id="sound-toggle" class="icon-btn" title="Toggle sound" aria-label="Mute sound" aria-pressed="true">🔊</button>
+        <button id="stats-btn" class="icon-btn" title="Statistics" aria-label="Statistics">📊</button>
+        <button id="help-btn" class="icon-btn" title="How to play" aria-label="How to play">ℹ️</button>
+        <button id="settings-btn" class="icon-btn" title="Settings" aria-label="Settings">⚙️</button>
       </div>
     </header>
 
-    <!-- Score Panel -->
-    <div class="score-panel">
-      <div class="score-box">
-        <div class="score-label">Score</div>
-        <div id="current-score" class="score-value">0</div>
-        <div id="score-addition-slot"></div>
+    <main class="game-main">
+      <div class="mode-row">
+        <span id="mode-label" class="mode-label">Classic 4×4</span>
+        <span id="goal-label" class="goal-chip">Goal 2048</span>
       </div>
-      <div class="score-box">
-        <div class="score-label">Best</div>
-        <div id="best-score" class="score-value">0</div>
+
+      <div class="score-panel">
+        <div class="score-box">
+          <div class="score-label">Score</div>
+          <div id="current-score" class="score-value">0</div>
+          <div id="score-addition-slot" class="score-addition-slot" aria-hidden="true"></div>
+        </div>
+        <div class="score-box">
+          <div class="score-label">Best</div>
+          <div id="best-score" class="score-value">0</div>
+        </div>
+        <div class="score-box">
+          <div id="moves-label" class="score-label">Moves</div>
+          <div id="moves-value" class="score-value">0</div>
+        </div>
       </div>
-    </div>
 
-    <!-- Toolbar -->
-    <div class="toolbar">
-      <select id="grid-select" class="grid-select" aria-label="Select Grid Size">
-        <option value="4" selected>Classic 4x4</option>
-        <option value="3">Fast 3x3</option>
-        <option value="5">Expansive 5x5</option>
-        <option value="6">Master 6x6</option>
-      </select>
-      <div style="display: flex; gap: 8px;">
-        <button id="undo-btn" class="btn-action" title="Undo Move" disabled>↩️ Undo</button>
-        <button id="new-game-btn" class="btn-action" title="Restart Game">🔄 New</button>
+      <div class="toolbar">
+        <button id="pause-btn" class="btn-action" title="Pause (P / Esc)" aria-label="Pause game">⏸ <span>Pause</span></button>
+        <button id="undo-btn" class="btn-action" title="Undo move (U / Z)" aria-label="Undo move" disabled>↩️ <span id="undo-text">Undo</span></button>
+        <button id="restart-btn" class="btn-action" title="Restart board (R)" aria-label="Restart board">🔄 <span>Restart</span></button>
       </div>
-    </div>
 
-    <!-- Game Board -->
-    <div id="board-container" class="board-container">
-      <div id="grid-board" class="grid-board"></div>
+      <div id="board-container" class="board-container" role="application" aria-label="2048 board. Swipe or use arrow keys to slide tiles.">
+        <div id="grid-bg" class="grid-bg" aria-hidden="true"></div>
+        <div id="tile-layer" class="tile-layer" aria-hidden="true"></div>
+        <div class="pause-veil" aria-hidden="true">⏸</div>
+      </div>
+      <p id="sr-status" class="sr-only" aria-live="polite"></p>
+      <p class="controls-hint">Swipe the board · Arrow keys / WASD · <kbd>U</kbd> undo · <kbd>P</kbd> pause</p>
+    </main>
 
-      <!-- Win / Game Over Overlay -->
-      <div id="board-overlay" class="board-overlay">
-        <div id="overlay-title" class="overlay-title">Game Over</div>
-        <div id="overlay-subtitle" class="overlay-subtitle">No more moves possible!</div>
-        <div class="overlay-btns">
-          <button id="overlay-continue-btn" class="btn-secondary" style="display: none;">Keep Playing</button>
-          <button id="overlay-restart-btn" class="btn-primary">Try Again</button>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+    <!-- Pause -->
+    <div id="pause-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="pause-title">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 id="pause-title" class="modal-title">Paused</h2>
+          <button class="icon-btn close-modal-btn" aria-label="Resume game">✕</button>
+        </div>
+        <div class="modal-body">
+          <p class="pause-info"><span id="pause-mode">Classic 4×4</span> · Score <span id="pause-score">0</span> · <span id="pause-time">00:00</span></p>
+          <div class="menu-stack">
+            <button id="pause-resume" class="btn-primary btn-wide">▶ Resume</button>
+            <button id="pause-restart" class="btn-secondary btn-wide">🔄 Restart board</button>
+            <button id="pause-settings" class="btn-secondary btn-wide">⚙️ Settings</button>
+            <button id="pause-menu" class="btn-secondary btn-wide">🏠 Main menu</button>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- Statistics Modal -->
-    <div id="stats-modal" class="modal-overlay">
+    <!-- Result (win / game over) -->
+    <div id="result-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="result-title">
+      <div class="modal-content result-content">
+        <div id="result-emoji" class="result-emoji" aria-hidden="true">🎉</div>
+        <h2 id="result-title" class="modal-title result-title">Stage cleared!</h2>
+        <div id="result-stars" class="result-stars" aria-label="Stars"></div>
+        <p id="result-text" class="result-text"></p>
+        <div class="result-stats">
+          <div class="stat-item"><div id="result-score" class="stat-num">0</div><div class="stat-desc">Score</div></div>
+          <div class="stat-item"><div id="result-moves" class="stat-num">0</div><div class="stat-desc">Moves</div></div>
+          <div class="stat-item"><div id="result-time" class="stat-num">00:00</div><div class="stat-desc">Time</div></div>
+        </div>
+        <div class="menu-stack">
+          <button id="result-next" class="btn-primary btn-wide">Next stage ➜</button>
+          <button id="result-continue" class="btn-primary btn-wide">Keep playing</button>
+          <button id="result-undo" class="btn-secondary btn-wide">↩️ Undo last move</button>
+          <button id="result-retry" class="btn-secondary btn-wide">🔄 Play again</button>
+          <button id="result-menu" class="btn-secondary btn-wide">🏠 Main menu</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Settings -->
+    <div id="settings-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="settings-title">
       <div class="modal-content">
         <div class="modal-header">
-          <h2 class="modal-title">Statistics</h2>
-          <button class="icon-btn close-modal-btn">✕</button>
+          <h2 id="settings-title" class="modal-title">Settings</h2>
+          <button class="icon-btn close-modal-btn" aria-label="Close settings">✕</button>
+        </div>
+        <div class="modal-body settings-body">
+          <label class="setting-row"><span>Sound effects</span><input type="checkbox" id="set-sound" class="switch"></label>
+          <label class="setting-row"><span>Vibration (haptics)</span><input type="checkbox" id="set-haptics" class="switch"></label>
+          <label class="setting-row"><span>Tile animations</span><input type="checkbox" id="set-anim" class="switch"></label>
+          <label class="setting-row"><span>Theme</span>
+            <select id="set-theme" class="select">
+              <option value="dark">Zen Dark</option>
+              <option value="sunset">Sunset Warm</option>
+              <option value="light">Clean Light</option>
+            </select>
+          </label>
+          <div class="setting-row">
+            <span>Reset progress &amp; statistics</span>
+            <button id="set-reset" class="btn-danger">Reset</button>
+          </div>
+          <p class="settings-note">Progress, statistics and settings are stored only on this device.</p>
+        </div>
+        <div class="modal-footer">
+          <button class="btn-primary close-modal-btn">Done</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Journey stage select -->
+    <div id="journey-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="journey-title">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 id="journey-title" class="modal-title">Journey</h2>
+          <button class="icon-btn close-modal-btn" aria-label="Close journey">✕</button>
+        </div>
+        <div class="modal-body">
+          <p class="journey-sub">Reach each stage's goal tile to unlock the next. <span id="journey-progress">0 / 24</span> cleared · <span id="journey-stars">0</span> ★</p>
+          <div id="journey-grid" class="journey-grid"></div>
+          <p class="journey-legend">🪨 stones never move · ⏱ limited moves · 3 undos per stage</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div id="stats-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="stats-title">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 id="stats-title" class="modal-title">Statistics</h2>
+          <button class="icon-btn close-modal-btn" aria-label="Close statistics">✕</button>
         </div>
         <div class="modal-body">
           <div class="stats-grid">
-            <div class="stat-item">
-              <div id="stat-played" class="stat-num">0</div>
-              <div class="stat-desc">Games Played</div>
-            </div>
-            <div class="stat-item">
-              <div id="stat-won" class="stat-num">0</div>
-              <div class="stat-desc">Victories</div>
-            </div>
-            <div class="stat-item">
-              <div id="stat-highest-tile" class="stat-num">0</div>
-              <div class="stat-desc">Highest Tile</div>
-            </div>
-            <div class="stat-item">
-              <div id="stat-total-score" class="stat-num">0</div>
-              <div class="stat-desc">All-Time Score</div>
-            </div>
+            <div class="stat-item"><div id="stat-played" class="stat-num">0</div><div class="stat-desc">Games played</div></div>
+            <div class="stat-item"><div id="stat-won" class="stat-num">0</div><div class="stat-desc">Goals reached</div></div>
+            <div class="stat-item"><div id="stat-highest-tile" class="stat-num">0</div><div class="stat-desc">Highest tile</div></div>
+            <div class="stat-item"><div id="stat-total-score" class="stat-num">0</div><div class="stat-desc">All-time score</div></div>
+            <div class="stat-item"><div id="stat-journey" class="stat-num">0/24</div><div class="stat-desc">Journey cleared</div></div>
+            <div class="stat-item"><div id="stat-stars" class="stat-num">0</div><div class="stat-desc">Stars earned</div></div>
           </div>
-          <p style="text-align: center; font-size: 0.8rem; color: var(--text-muted);">
-            All data saved locally on your device.
-          </p>
+          <h3 class="stats-sub">Best scores</h3>
+          <div id="stat-bests" class="best-list"></div>
+          <p class="settings-note">All data is saved locally on your device.</p>
         </div>
         <div class="modal-footer">
           <button class="btn-primary close-modal-btn">Close</button>
@@ -106,32 +181,61 @@
       </div>
     </div>
 
-    <!-- Help Modal -->
-    <div id="help-modal" class="modal-overlay">
+    <!-- Help -->
+    <div id="help-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="help-title">
       <div class="modal-content">
         <div class="modal-header">
-          <h2 class="modal-title">How to Play Zen2048</h2>
-          <button class="icon-btn close-modal-btn">✕</button>
+          <h2 id="help-title" class="modal-title">How to play</h2>
+          <button class="icon-btn close-modal-btn" aria-label="Close how to play">✕</button>
         </div>
         <div class="modal-body">
-          <p style="margin-bottom: 10px;">• <strong>Controls:</strong> Swipe across the board or use the Arrow keys (or W, A, S, D) to slide tiles in all four directions.</p>
-          <p style="margin-bottom: 10px;">• <strong>Merge:</strong> When two tiles with the same number touch, they merge into one with double the value!</p>
-          <p style="margin-bottom: 10px;">• <strong>Objective:</strong> Reach the <strong>2048</strong> tile to win! You can continue playing indefinitely to achieve higher scores.</p>
-          <p style="margin-bottom: 10px;">• <strong>Undo:</strong> Tap ↩️ Undo anytime to step backward and rethink your moves.</p>
-          <p>• <strong>100% Offline:</strong> Enjoy endless puzzle solving anywhere with zero ads or internet required.</p>
+          <ul class="help-list">
+            <li><strong>Slide:</strong> swipe the board (touch or mouse drag) or press the arrow keys / W A S D. Every tile slides as far as it can.</li>
+            <li><strong>Merge:</strong> two equal tiles that touch merge into one with double the value, and the value is added to your score.</li>
+            <li><strong>New tiles:</strong> after every move a 2 (or sometimes a 4) appears in an empty square.</li>
+            <li><strong>Goal:</strong> build the goal tile shown above the board. In Classic you can keep playing for a bigger score.</li>
+            <li><strong>Journey:</strong> 24 stages with different boards, 🪨 stones that never move, and ⏱ move limits. Finish in fewer moves for more ★.</li>
+            <li><strong>Undo:</strong> step back with ↩️ (unlimited in Classic, 3 per Journey stage).</li>
+            <li><strong>Pause:</strong> tap ⏸ or press P / Esc. Your board is saved automatically, so you can Continue later.</li>
+          </ul>
         </div>
         <div class="modal-footer">
-          <button class="btn-primary close-modal-btn">Got It</button>
+          <button class="btn-primary close-modal-btn">Got it</button>
         </div>
       </div>
     </div>
 
-    <!-- Footer -->
+    <!-- Main menu -->
+    <section id="menu-screen" class="menu-screen open" aria-labelledby="menu-title">
+      <div class="menu-card">
+        <img src="favicon.svg" alt="" class="menu-logo" width="84" height="84">
+        <h2 id="menu-title" class="menu-title">Zen2048</h2>
+        <p class="menu-tag">Calm tile merge puzzle · works offline</p>
+        <div class="menu-stack">
+          <button id="menu-continue" class="btn-primary btn-wide" hidden>▶ Continue <small id="menu-continue-info"></small></button>
+          <button id="menu-journey" class="btn-primary btn-wide">🧭 Journey <small id="menu-journey-info">Stage 1 / 24</small></button>
+        </div>
+        <p class="menu-label">Classic</p>
+        <div class="menu-diff">
+          <button class="btn-secondary" data-size="3">Mini<small>3×3 · 256</small></button>
+          <button class="btn-secondary" data-size="4">Classic<small>4×4 · 2048</small></button>
+          <button class="btn-secondary" data-size="5">Big<small>5×5 · 4096</small></button>
+          <button class="btn-secondary" data-size="6">Huge<small>6×6 · 8192</small></button>
+        </div>
+        <div class="menu-row">
+          <button id="menu-settings" class="btn-ghost">⚙️ Settings</button>
+          <button id="menu-stats" class="btn-ghost">📊 Stats</button>
+          <button id="menu-help" class="btn-ghost">ℹ️ How to play</button>
+        </div>
+      </div>
+    </section>
+
     <footer>
-      Zen2048 — 100% Offline Casual Game by <a href="https://github.com/OfferPk" target="_blank" rel="noopener">OfferPk</a>
+      Zen2048 — offline casual game by <a href="https://github.com/OfferPk" target="_blank" rel="noopener">OfferPk</a>
     </footer>
   </div>
 
+  <script src="ads.js"></script>
   <script src="logic.js"></script>
   <script src="audio.js"></script>
   <script src="game.js"></script>
